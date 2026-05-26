@@ -19,3 +19,12 @@ console.log("AFTER DRAW", drawResult.state);
 console.log("DRAW EVENTS", drawResult.events);
 console.log("AFTER PLAY", playResult.state);
 console.log("PLAY EVENTS", playResult.events);
+
+const jettisonResult = resolveAction(playResult.state, {
+  type: "JETTISON_CARD",
+  playerId: "P1",
+  cardId: "passenger",
+});
+
+console.log("AFTER JETTISON", jettisonResult.state);
+console.log("JETTISON EVENTS", jettisonResult.events);

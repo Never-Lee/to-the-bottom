@@ -77,6 +77,43 @@ export function resolveAction(
       };
     }
 
+    case "JETTISON_CARD": {
+  const player = state.players[action.playerId];
+
+  if (!player.board.includes(action.cardId)) {
+    return { state, events: [] };
+  }
+
+  const pointsGained = 1;
+
+  const updatedPlayer = {
+    ...player,
+    board: player.board.filter((cardId) => cardId !== action.cardId),
+    water: [...player.water, action.cardId],
+    points: player.points + pointsGained,
+  };
+
+  return {
+    state: {
+      ...state,
+      players: {
+        ...state.players,
+        [action.playerId]: updatedPlayer,
+      },
+    },
+    events: [
+      {
+        type: "CARD_JETTISONED",
+        playerId: action.playerId,
+        cardId: action.cardId,
+        from: "BOARD",
+        to: "WATER",
+        pointsGained,
+      },
+    ],
+  };
+}
+
     default:
       return { state, events: [] };
   }

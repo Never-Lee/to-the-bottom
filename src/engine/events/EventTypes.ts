@@ -15,4 +15,12 @@ export type GameEvent =
       cardId: CardId;
       from: "HAND";
       to: "BOARD";
-    };
+    }
+  | {
+    type: "CARD_JETTISONED";
+    playerId: PlayerId;
+    cardId: CardId;
+    from: "BOARD";
+    to: "WATER";
+    pointsGained: number;
+  }
