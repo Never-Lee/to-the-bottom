@@ -1,6 +1,7 @@
 import type { GameAction } from "../actions/ActionTypes";
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
+import { cards } from "../cards/cards";
 
 export function resolveAction(
   state: GameState,
@@ -80,15 +81,25 @@ export function resolveAction(
     case "JETTISON_CARD": {
   const player = state.players[action.playerId];
 
-  if (!player.board.includes(action.cardId)) {
-    return { state, events: [] };
+  if (!player.hand.includes(action.cardId)) {
+    return {
+  state,
+  events: [
+    {
+      type: "ACTION_REJECTED",
+      playerId: action.playerId,
+      reason: "Card is not in hand",
+    },
+  ],
+};
   }
 
-  const pointsGained = 1;
+const card = cards[action.cardId];
 
+const pointsGained = card.points;
   const updatedPlayer = {
     ...player,
-    board: player.board.filter((cardId) => cardId !== action.cardId),
+    hand: player.hand.filter((cardId) => cardId !== action.cardId),
     water: [...player.water, action.cardId],
     points: player.points + pointsGained,
   };
@@ -106,7 +117,7 @@ export function resolveAction(
         type: "CARD_JETTISONED",
         playerId: action.playerId,
         cardId: action.cardId,
-        from: "BOARD",
+        from: "HAND",
         to: "WATER",
         pointsGained,
       },
