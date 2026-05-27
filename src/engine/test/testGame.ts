@@ -1,8 +1,12 @@
-import { createInitialGameState } from "../core/GameState";
 import { cards } from "../cards/cards";
 import { resolveEffect } from "../resolver/resolveEffect";
+import { createTestState } from "./testUtils";
 
-const initialState = createInitialGameState();
+const initialState = createTestState({
+  P1: {
+    board: ["anchor"],
+  },
+});
 
 const anchor = cards.anchor;
 const anchorEffect = anchor.effects[0];
@@ -15,6 +19,7 @@ const result = resolveEffect(
     sourceCardId: "anchor",
   }
 );
+
 console.log("ANCHOR EFFECT EVENTS");
 console.dir(result.events, { depth: null });
 

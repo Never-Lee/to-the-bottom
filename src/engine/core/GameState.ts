@@ -24,15 +24,16 @@ export function createInitialGameState(): GameState {
     players: {
       P1: {
         id: "P1",
-        deck: ["passenger"],
+        deck: [],
         hand: [],
-        board: ["anchor"],
+        board: [],
         water: [],
         points: 0,
       },
+
       P2: {
         id: "P2",
-        deck: ["passenger"],
+        deck: [],
         hand: [],
         board: [],
         water: [],

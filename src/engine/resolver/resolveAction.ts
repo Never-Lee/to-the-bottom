@@ -1,7 +1,7 @@
 import type { GameAction } from "../actions/ActionTypes";
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
-import { cards } from "../cards/cards";
+import { getCard } from "../cards/cardRegistry";
 
 export function resolveAction(
   state: GameState,
@@ -61,7 +61,7 @@ export function resolveAction(
     };
   }
 
-  const card = cards[action.cardId];
+  const card = getCard(action.cardId);
 
   if (player.points < card.cost) {
     return {
@@ -119,7 +119,7 @@ export function resolveAction(
 };
   }
 
-const card = cards[action.cardId];
+const card = getCard(action.cardId);
 
 const pointsGained = card.points;
   const updatedPlayer = {
