@@ -30,7 +30,8 @@ for (const scenario of scenarios) {
     (!expectedP1.hand || arraysEqual(p1.hand, expectedP1.hand)) &&
     (!expectedP1.board || arraysEqual(p1.board, expectedP1.board)) &&
     (!expectedP1.water || arraysEqual(p1.water, expectedP1.water)) &&
-    (expectedP1.points === undefined || p1.points === expectedP1.points);
+    (expectedP1.points === undefined || p1.points === expectedP1.points) &&
+    (!expectedP1.deck || arraysEqual(p1.deck, expectedP1.deck));
 
   const passed = eventsPass && statePass;
 
@@ -46,6 +47,7 @@ for (const scenario of scenarios) {
       board: p1.board,
       water: p1.water,
       points: p1.points,
+      deck: p1.deck,
     });
   }
 }

@@ -44,4 +44,28 @@ anchor: {
     },
   ],
 },
-}
+
+fisherman: {
+  id: "fisherman",
+  name: "Fisherman",
+  color: "GREEN",
+  cost: 2,
+  points: 2,
+  effects: [
+    {
+      id: "fisherman_modify_draw",
+      trigger: "DRAW_PHASE",
+      timing: "OWN_TURN_DRAW_PHASE",
+      activation: "PASSIVE",
+      optional: false,
+      steps: [
+        {
+          effect: "MODIFY_DRAW_COUNT",
+          target: "SELF",
+          value: 1,
+        },
+      ],
+    },
+  ],
+},
+};

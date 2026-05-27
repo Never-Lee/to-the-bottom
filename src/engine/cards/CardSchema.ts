@@ -38,6 +38,7 @@ export type CardEffect = {
 export type EffectStep = {
   effect: EffectKeyword;
   target?: string;
+  value?: number;
 };
 
 export type EffectContext = {

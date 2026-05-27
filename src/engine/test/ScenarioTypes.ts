@@ -7,6 +7,7 @@ export type ExpectedPlayerState = {
   board?: CardId[];
   water?: CardId[];
   points?: number;
+  deck?: CardId[];
 };
 
 export type BaseScenario = {

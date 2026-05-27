@@ -14,4 +14,8 @@ export type GameAction =
       type: "JETTISON_CARD";
       playerId: PlayerId;
       cardId: string;
-    };
+    }
+    | {
+    type: "DRAW_PHASE";
+    playerId: PlayerId;
+  };

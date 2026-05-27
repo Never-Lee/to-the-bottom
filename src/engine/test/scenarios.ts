@@ -48,4 +48,36 @@ export const scenarios: Scenario[] = [
       },
     },
   },
+  {
+    kind: "action",
+    name: "Player draws 3 cards at start of CRUISE",
+    state: createTestState({
+      P1: {
+        deck: [
+          "passenger",
+          "anchor",
+          "fisherman",
+        ],
+      },
+    }),
+    action: {
+      type: "DRAW_PHASE" as const,
+      playerId: "P1" as const,
+    },
+    expectedEvents: [
+      "CARD_DRAWN",
+      "CARD_DRAWN",
+      "CARD_DRAWN",
+    ],
+    expectedState: {
+      P1: {
+        hand: [
+          "passenger",
+          "anchor",
+          "fisherman",
+        ],
+        deck: [],
+      },
+    },
+  },
 ];

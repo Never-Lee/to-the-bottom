@@ -2,6 +2,7 @@ import type { GameAction } from "../actions/ActionTypes";
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
 import { getCard } from "../cards/cardRegistry";
+import { resolveDrawPhase } from "../phases/resolveDrawPhase";
 
 export function resolveAction(
   state: GameState,
@@ -149,7 +150,22 @@ const pointsGained = card.points;
     ],
   };
 }
+case "DRAW_PHASE": {
+  if (action.playerId !== state.activePlayerId) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Only active player can resolve draw phase",
+        },
+      ],
+    };
+  }
 
+  return resolveDrawPhase(state);
+}
     default:
       return { state, events: [] };
   }

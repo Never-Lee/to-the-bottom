@@ -15,12 +15,18 @@ export type GameState = {
   players: Record<PlayerId, PlayerState>;
   activePlayerId: PlayerId;
   turnNumber: number;
+  chapter: GameChapter;
+drawTurnIndex: number;
 };
+
+export type GameChapter = "CRUISE" | "SINKING";
 
 export function createInitialGameState(): GameState {
   return {
     activePlayerId: "P1",
     turnNumber: 1,
+      chapter: "CRUISE",
+  drawTurnIndex: 0,
     players: {
       P1: {
         id: "P1",

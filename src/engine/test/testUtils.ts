@@ -20,6 +20,8 @@ export function createTestState(config: TestStateConfig = {}): GameState {
   return {
     activePlayerId: "P1",
     turnNumber: 1,
+      chapter: "CRUISE",
+  drawTurnIndex: 0,
     players: {
       P1: {
         ...defaultPlayerState("P1"),
