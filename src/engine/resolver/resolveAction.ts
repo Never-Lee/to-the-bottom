@@ -46,37 +46,62 @@ export function resolveAction(
     }
 
     case "PLAY_CARD": {
-      const player = state.players[action.playerId];
+  const player = state.players[action.playerId];
 
-      if (!player.hand.includes(action.cardId)) {
-        return { state, events: [] };
-      }
-
-      const updatedPlayer = {
-        ...player,
-        hand: player.hand.filter((cardId) => cardId !== action.cardId),
-        board: [...player.board, action.cardId],
-      };
-
-      return {
-        state: {
-          ...state,
-          players: {
-            ...state.players,
-            [action.playerId]: updatedPlayer,
-          },
+  if (!player.hand.includes(action.cardId)) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Card is not in hand",
         },
-        events: [
-          {
-            type: "CARD_PLAYED",
-            playerId: action.playerId,
-            cardId: action.cardId,
-            from: "HAND",
-            to: "BOARD",
-          },
-        ],
-      };
-    }
+      ],
+    };
+  }
+
+  const card = cards[action.cardId];
+
+  if (player.points < card.cost) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Not enough points",
+        },
+      ],
+    };
+  }
+
+  const updatedPlayer = {
+    ...player,
+    hand: player.hand.filter((cardId) => cardId !== action.cardId),
+    board: [...player.board, action.cardId],
+    points: player.points - card.cost,
+  };
+
+  return {
+    state: {
+      ...state,
+      players: {
+        ...state.players,
+        [action.playerId]: updatedPlayer,
+      },
+    },
+    events: [
+      {
+        type: "CARD_PLAYED",
+        playerId: action.playerId,
+        cardId: action.cardId,
+        from: "HAND",
+        to: "BOARD",
+      },
+    ],
+  };
+}
 
     case "JETTISON_CARD": {
   const player = state.players[action.playerId];

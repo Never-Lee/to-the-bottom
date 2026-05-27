@@ -20,7 +20,7 @@ export type GameEvent =
     type: "CARD_JETTISONED";
     playerId: PlayerId;
     cardId: CardId;
-    from: "HAND";
+    from: "HAND" | "BOARD";
     to: "WATER";
     pointsGained: number;
   }
@@ -29,3 +29,11 @@ export type GameEvent =
     playerId: PlayerId;
     reason: string;
   }
+  | {
+    type: "DRAW_PHASE_SKIPPED";
+    reason: string;
+  }
+| {
+    type: "EFFECT_STEP_NOT_IMPLEMENTED";
+    effect: string;
+  };

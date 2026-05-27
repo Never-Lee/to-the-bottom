@@ -26,7 +26,7 @@ export function createInitialGameState(): GameState {
         id: "P1",
         deck: ["passenger"],
         hand: [],
-        board: [],
+        board: ["anchor"],
         water: [],
         points: 0,
       },
