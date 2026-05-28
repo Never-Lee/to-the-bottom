@@ -1,7 +1,7 @@
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
 import { getBaseDrawCount } from "./getBaseDrawCount";
-import { getCard } from "../cards/cardRegistry";
+import { getPassiveEffectsForTrigger } from "../effects/getPassiveEffectsForTrigger";
 
 export function resolveDrawPhase(state: GameState): {
   state: GameState;
@@ -19,30 +19,27 @@ let skipDrawPhase = false;
 
 
 
-for (const cardId of player.board) {
-  const card = getCard(cardId);
+const passiveEffects = getPassiveEffectsForTrigger(
+  state,
+  state.activePlayerId,
+  "DRAW_PHASE"
+);
 
-  for (const effect of card.effects) {
-    if (
-      effect.trigger === "DRAW_PHASE" &&
-      effect.timing === "OWN_TURN_DRAW_PHASE" &&
-      effect.activation === "PASSIVE"
-    ) {
-      for (const step of effect.steps) {
-        if (step.effect === "MODIFY_DRAW_COUNT") {
-          drawCount += step.value ?? 0;
-        }
+for (const effect of passiveEffects) {
+  for (const step of effect.steps) {
+    if (step.effect === "MODIFY_DRAW_COUNT") {
+      drawCount += step.value ?? 0;
+    }
 
-        if (step.effect === "SKIP_DRAW_PHASE") {
-          drawCount = 0;  skipDrawPhase = true;
-}
-      }
-      if (skipDrawPhase) {
-  drawCount = 0;
-}
+    if (step.effect === "SKIP_DRAW_PHASE") {
+      skipDrawPhase = true;
     }
   }
 }
+if (skipDrawPhase) {
+  drawCount = 0;
+}
+
   const drawnCards = player.deck.slice(0, drawCount);
   const remainingDeck = player.deck.slice(drawCount);
 
