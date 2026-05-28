@@ -1,6 +1,7 @@
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
 import { getBaseDrawCount } from "./getBaseDrawCount";
+import { getCard } from "../cards/cardRegistry";
 
 export function resolveDrawPhase(state: GameState): {
   state: GameState;
@@ -8,11 +9,32 @@ export function resolveDrawPhase(state: GameState): {
 } {
   const player = state.players[state.activePlayerId];
 
-  const drawCount = getBaseDrawCount(
-    state.chapter,
-    state.drawTurnIndex
-  );
+let drawCount = getBaseDrawCount(
+  state.chapter,
+  state.drawTurnIndex
+);
 
+for (const cardId of player.board) {
+  const card = getCard(cardId);
+
+  for (const effect of card.effects) {
+    if (
+      effect.trigger === "DRAW_PHASE" &&
+      effect.timing === "OWN_TURN_DRAW_PHASE" &&
+      effect.activation === "PASSIVE"
+    ) {
+      for (const step of effect.steps) {
+        if (step.effect === "MODIFY_DRAW_COUNT") {
+          drawCount += step.value ?? 0;
+        }
+
+        if (step.effect === "SKIP_DRAW_PHASE") {
+          drawCount = 0;
+        }
+      }
+    }
+  }
+}
   const drawnCards = player.deck.slice(0, drawCount);
   const remainingDeck = player.deck.slice(drawCount);
 
