@@ -117,4 +117,66 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Anchor prevents drawing during draw phase",
+  state: createTestState({
+    P1: {
+      board: ["anchor"],
+      deck: [
+        "passenger",
+        "fisherman",
+        "passenger",
+      ],
+    },
+  }),
+  action: {
+    type: "DRAW_PHASE" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: [],
+  expectedState: {
+    P1: {
+      board: ["anchor"],
+      hand: [],
+      deck: [
+        "passenger",
+        "fisherman",
+        "passenger",
+      ],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Anchor overrides Fisherman draw bonus",
+  state: createTestState({
+    P1: {
+      board: ["anchor", "fisherman"],
+      deck: [
+        "passenger",
+        "anchor",
+        "passenger",
+        "anchor",
+      ],
+    },
+  }),
+  action: {
+    type: "DRAW_PHASE" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: [],
+  expectedState: {
+    P1: {
+      board: ["anchor", "fisherman"],
+      hand: [],
+      deck: [
+        "passenger",
+        "anchor",
+        "passenger",
+        "anchor",
+      ],
+    },
+  },
+},
 ];

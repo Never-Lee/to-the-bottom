@@ -12,7 +12,12 @@ export function resolveDrawPhase(state: GameState): {
 let drawCount = getBaseDrawCount(
   state.chapter,
   state.drawTurnIndex
+  
 );
+
+let skipDrawPhase = false;
+
+
 
 for (const cardId of player.board) {
   const card = getCard(cardId);
@@ -29,9 +34,12 @@ for (const cardId of player.board) {
         }
 
         if (step.effect === "SKIP_DRAW_PHASE") {
-          drawCount = 0;
-        }
+          drawCount = 0;  skipDrawPhase = true;
+}
       }
+      if (skipDrawPhase) {
+  drawCount = 0;
+}
     }
   }
 }
