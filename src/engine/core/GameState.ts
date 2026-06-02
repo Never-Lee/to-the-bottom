@@ -8,7 +8,9 @@ export type PlayerState = {
   hand: CardId[];
   board: CardId[];
   water: CardId[];
+  exhaustedCards: CardId[];
   points: number;
+  
 };
 
 export type GameState = {
@@ -34,6 +36,7 @@ export function createInitialGameState(): GameState {
         hand: [],
         board: [],
         water: [],
+        exhaustedCards: [],
         points: 0,
       },
 
@@ -43,6 +46,7 @@ export function createInitialGameState(): GameState {
         hand: [],
         board: [],
         water: [],
+        exhaustedCards: [],
         points: 0,
       },
     },

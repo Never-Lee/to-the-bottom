@@ -17,6 +17,7 @@ const defaultPlayerState = (id: "P1" | "P2"): PlayerState => ({
   hand: [],
   board: [],
   water: [],
+  exhaustedCards: [],
   points: 0,
 });
 

@@ -8,6 +8,7 @@ export type ExpectedPlayerState = {
   water?: CardId[];
   points?: number;
   deck?: CardId[];
+  exhaustedCards?: CardId[];
 };
 
 export type BaseScenario = {

@@ -423,5 +423,55 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Exhausted Captain cannot be activated",
+  state: createTestState({
+    P1: {
+      board: ["captain"],
+      exhaustedCards: ["captain"],
+      hand: ["passenger"],
+      deck: ["anchor"],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "captain",
+    input: {
+      selectedCardIds: ["passenger"],
+    },
+  },
+  expectedEvents: ["ACTION_REJECTED"],
+  expectedState: {
+    P1: {
+      board: ["captain"],
+      exhaustedCards: ["captain"],
+      hand: ["passenger"],
+      deck: ["anchor"],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Ready phase readies exhausted cards",
+  state: createTestState({
+    P1: {
+      board: ["captain"],
+      exhaustedCards: ["captain"],
+    },
+  }),
+  action: {
+    type: "READY_PHASE" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: ["CARDS_READIED"],
+  expectedState: {
+    P1: {
+      board: ["captain"],
+      exhaustedCards: [],
+    },
+  },
+},
 ];
 

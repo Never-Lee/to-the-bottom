@@ -42,3 +42,8 @@ export type GameEvent =
     playerId: PlayerId;
     cardIds: CardId[];
   }
+| {
+    type: "CARDS_READIED";
+    playerId: PlayerId;
+    cardIds: CardId[];
+  }

@@ -26,3 +26,7 @@ export type GameAction =
     cardId: CardId;
     input?: EffectInput;
   }
+  | {
+    type: "READY_PHASE";
+    playerId: PlayerId;
+  }

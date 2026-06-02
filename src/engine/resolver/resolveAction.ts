@@ -184,6 +184,18 @@ case "ACTIVATE_CARD": {
       ],
     };
   }
+  if (player.exhaustedCards.includes(action.cardId)) {
+  return {
+    state,
+    events: [
+      {
+        type: "ACTION_REJECTED",
+        playerId: action.playerId,
+        reason: "Card is exhausted",
+      },
+    ],
+  };
+}
 
   const card = getCard(action.cardId);
 
@@ -220,8 +232,20 @@ if (!checkRequirements(state, effect, {
     ],
   };
 }
+const exhaustedPlayer = {
+  ...player,
+  exhaustedCards: [...player.exhaustedCards, action.cardId],
+};
+
+const exhaustedState: GameState = {
+  ...state,
+  players: {
+    ...state.players,
+    [action.playerId]: exhaustedPlayer,
+  },
+};
   return resolveEffect(
-    state,
+    exhaustedState,
     effect,
     {
       actorId: action.playerId,
@@ -229,6 +253,33 @@ if (!checkRequirements(state, effect, {
     },
     action.input
   );
+}
+case "READY_PHASE": {
+  const player = state.players[action.playerId];
+
+  const readiedCardIds = player.exhaustedCards;
+
+  const updatedPlayer = {
+    ...player,
+    exhaustedCards: [],
+  };
+
+  return {
+    state: {
+      ...state,
+      players: {
+        ...state.players,
+        [action.playerId]: updatedPlayer,
+      },
+    },
+    events: [
+      {
+        type: "CARDS_READIED",
+        playerId: action.playerId,
+        cardIds: readiedCardIds,
+      },
+    ],
+  };
 }
     default:
       return { state, events: [] };
