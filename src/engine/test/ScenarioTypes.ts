@@ -25,7 +25,7 @@ export type EffectScenario = BaseScenario & {
   effect: {
     cardId: CardId;
     effectIndex: number;
-    ownerId: PlayerId;
+    actorId: PlayerId;
   };
 };
 

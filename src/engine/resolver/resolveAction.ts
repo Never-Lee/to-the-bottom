@@ -2,7 +2,9 @@ import type { GameAction } from "../actions/ActionTypes";
 import type { GameState } from "../core/GameState";
 import type { GameEvent } from "../events/EventTypes";
 import { getCard } from "../cards/cardRegistry";
+import { resolveEffect } from "./resolveEffect";
 import { resolveDrawPhase } from "../phases/resolveDrawPhase";
+import { checkRequirements } from "../effects/checkRequirements";
 
 export function resolveAction(
   state: GameState,
@@ -165,6 +167,68 @@ case "DRAW_PHASE": {
   }
 
   return resolveDrawPhase(state);
+}
+
+case "ACTIVATE_CARD": {
+  const player = state.players[action.playerId];
+
+  if (!player.board.includes(action.cardId)) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Card is not on board",
+        },
+      ],
+    };
+  }
+
+  const card = getCard(action.cardId);
+
+  const effect = card.effects.find(
+    (effect) =>
+      effect.activation === "EXHAUST" &&
+      effect.timing === "OWN_TURN_ACTION_WINDOW"
+  );
+
+  if (!effect) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Card has no activatable action effect",
+        },
+      ],
+    };
+  }
+if (!checkRequirements(state, effect, {
+  actorId: action.playerId,
+  sourceCardId: action.cardId,
+})) {
+  return {
+    state,
+    events: [
+      {
+        type: "ACTION_REJECTED",
+        playerId: action.playerId,
+        reason: "Activation requirements not met",
+      },
+    ],
+  };
+}
+  return resolveEffect(
+    state,
+    effect,
+    {
+      actorId: action.playerId,
+      sourceCardId: action.cardId,
+    },
+    action.input
+  );
 }
     default:
       return { state, events: [] };

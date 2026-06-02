@@ -20,7 +20,7 @@ export type GameEvent =
     type: "CARD_JETTISONED";
     playerId: PlayerId;
     cardId: CardId;
-    from: "HAND" | "BOARD";
+    from: "HAND" | "BOARD" | "DECK";
     to: "WATER";
     pointsGained: number;
   }
@@ -36,4 +36,9 @@ export type GameEvent =
 | {
     type: "EFFECT_STEP_NOT_IMPLEMENTED";
     effect: string;
-  };
+  }
+| {
+    type: "CARDS_SHUFFLED_INTO_DECK";
+    playerId: PlayerId;
+    cardIds: CardId[];
+  }

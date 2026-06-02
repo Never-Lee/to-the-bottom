@@ -15,7 +15,11 @@ export type EffectTiming =
 export type EffectKeyword =
   | "SKIP_DRAW_PHASE"
   | "JETTISON_SELF"
-  | "MODIFY_DRAW_COUNT";
+  | "MODIFY_DRAW_COUNT"
+  | "SHUFFLE_SELECTED_HAND_CARDS_INTO_DECK"
+  | "DRAW_SAME_AMOUNT"
+  | "JETTISON_FROM_OPPONENT_DECK"
+  | "JETTISON_SELECTED_HAND_CARDS"
 
 export type CardSchema = {
   id: CardId;
@@ -33,15 +37,27 @@ export type CardEffect = {
   activation: EffectActivation;
   optional: boolean;
   steps: EffectStep[];
+  requirements?: ActivationRequirement[];
 };
 
 export type EffectStep = {
   effect: EffectKeyword;
   target?: string;
   value?: number;
+  inputKey?: string;
 };
 
 export type EffectContext = {
-  ownerId: PlayerId;
+  actorId: PlayerId;
   sourceCardId: CardId;
+};
+
+export type EffectInput = {
+  selectedCardIds?: CardId[];
+  targetPlayerId?: PlayerId;
+
+};
+export type ActivationRequirement = {
+  type: "MIN_HAND_CARDS";
+  value: number;
 };

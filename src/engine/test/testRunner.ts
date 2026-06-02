@@ -14,7 +14,7 @@ for (const scenario of scenarios) {
           scenario.state,
           getCard(scenario.effect.cardId).effects[scenario.effect.effectIndex],
           {
-            ownerId: scenario.effect.ownerId,
+            actorId: scenario.effect.actorId,
             sourceCardId: scenario.effect.cardId,
           }
         )

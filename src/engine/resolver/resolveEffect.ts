@@ -1,14 +1,16 @@
-import type { GameState } from "../core/GameState";
-import type { GameEvent } from "../events/EventTypes";
 import type {
   CardEffect,
   EffectContext,
+  EffectInput,
 } from "../cards/CardSchema";
+import type { GameState } from "../core/GameState";
+import type { GameEvent } from "../events/EventTypes";
 
 export function resolveEffect(
   state: GameState,
   effect: CardEffect,
-  context: EffectContext
+  context: EffectContext,
+  input?: EffectInput
 ): {
   state: GameState;
   events: GameEvent[];
@@ -23,61 +25,222 @@ export function resolveEffect(
           type: "DRAW_PHASE_SKIPPED",
           reason: effect.id,
         });
-
         break;
       }
 
       case "JETTISON_SELF": {
-  const player = currentState.players[context.ownerId];
+        const player = currentState.players[context.actorId];
 
-  if (!player.board.includes(context.sourceCardId)) {
-    events.push({
-      type: "ACTION_REJECTED",
-      playerId: context.ownerId,
-      reason: "Source card is not on board",
-    });
+        if (!player.board.includes(context.sourceCardId)) {
+          events.push({
+            type: "ACTION_REJECTED",
+            playerId: context.actorId,
+            reason: "Source card is not on board",
+          });
+          break;
+        }
 
-    break;
-  }
+        const updatedPlayer = {
+          ...player,
+          board: player.board.filter(
+            (cardId) => cardId !== context.sourceCardId
+          ),
+          water: [...player.water, context.sourceCardId],
+        };
 
-  const updatedPlayer = {
-    ...player,
-    board: player.board.filter(
-      (cardId) => cardId !== context.sourceCardId
-    ),
-    water: [...player.water, context.sourceCardId],
-  };
+        currentState = {
+          ...currentState,
+          players: {
+            ...currentState.players,
+            [context.actorId]: updatedPlayer,
+          },
+        };
 
-  currentState = {
-    ...currentState,
-    players: {
-      ...currentState.players,
-      [context.ownerId]: updatedPlayer,
-    },
-  };
+        events.push({
+          type: "CARD_JETTISONED",
+          playerId: context.actorId,
+          cardId: context.sourceCardId,
+          from: "BOARD",
+          to: "WATER",
+          pointsGained: 0,
+        });
 
-  events.push({
-    type: "CARD_JETTISONED",
-    playerId: context.ownerId,
-    cardId: context.sourceCardId,
-    from: "BOARD",
-    to: "WATER",
-    pointsGained: 0,
-  });
+        break;
+      }
 
-  break;
-}
+      case "SHUFFLE_SELECTED_HAND_CARDS_INTO_DECK": {
+        const selectedCardIds = input?.selectedCardIds ?? [];
+        const player = currentState.players[context.actorId];
+
+        const selectedCardsInHand = selectedCardIds.filter((cardId) =>
+          player.hand.includes(cardId)
+        );
+
+        const updatedPlayer = {
+          ...player,
+          hand: player.hand.filter(
+            (cardId) => !selectedCardsInHand.includes(cardId)
+          ),
+          deck: [...player.deck, ...selectedCardsInHand],
+        };
+
+        currentState = {
+          ...currentState,
+          players: {
+            ...currentState.players,
+            [context.actorId]: updatedPlayer,
+          },
+        };
+
+        events.push({
+          type: "CARDS_SHUFFLED_INTO_DECK",
+          playerId: context.actorId,
+          cardIds: selectedCardsInHand,
+        });
+
+        break;
+      }
+
+      case "DRAW_SAME_AMOUNT": {
+        const selectedCardIds = input?.selectedCardIds ?? [];
+        const amount = selectedCardIds.length;
+
+        const player = currentState.players[context.actorId];
+
+        const drawnCards = player.deck.slice(0, amount);
+        const remainingDeck = player.deck.slice(amount);
+
+        const updatedPlayer = {
+          ...player,
+          deck: remainingDeck,
+          hand: [...player.hand, ...drawnCards],
+        };
+
+        currentState = {
+          ...currentState,
+          players: {
+            ...currentState.players,
+            [context.actorId]: updatedPlayer,
+          },
+        };
+
+        for (const cardId of drawnCards) {
+          events.push({
+            type: "CARD_DRAWN",
+            playerId: context.actorId,
+            cardId,
+            from: "DECK",
+            to: "HAND",
+          });
+        }
+
+        break;
+      }
+
+      case "MODIFY_DRAW_COUNT": {
+        events.push({
+          type: "EFFECT_STEP_NOT_IMPLEMENTED",
+          effect: step.effect,
+        });
+        break;
+      }
 
       default: {
         events.push({
           type: "EFFECT_STEP_NOT_IMPLEMENTED",
           effect: step.effect,
         });
-
+        
         break;
+        
       }
+      case "JETTISON_FROM_OPPONENT_DECK": {
+  const targetPlayerId = input?.targetPlayerId;
+
+  if (!targetPlayerId) {
+    events.push({
+      type: "ACTION_REJECTED",
+      playerId: context.actorId,
+      reason: "No target player selected",
+    });
+    break;
+  }
+
+  const targetPlayer = currentState.players[targetPlayerId];
+  const amount = step.value ?? 0;
+
+  const jettisonedCards = targetPlayer.deck.slice(0, amount);
+  const remainingDeck = targetPlayer.deck.slice(amount);
+
+  const updatedTargetPlayer = {
+    ...targetPlayer,
+    deck: remainingDeck,
+    water: [...targetPlayer.water, ...jettisonedCards],
+  };
+
+  currentState = {
+    ...currentState,
+    players: {
+      ...currentState.players,
+      [targetPlayerId]: updatedTargetPlayer,
+    },
+  };
+
+  for (const cardId of jettisonedCards) {
+    events.push({
+      type: "CARD_JETTISONED",
+      playerId: targetPlayerId,
+      cardId,
+      from: "DECK",
+      to: "WATER",
+      pointsGained: 0,
+    });
+  }
+
+  break;
+}
+case "JETTISON_SELECTED_HAND_CARDS": {
+  const selectedCardIds = input?.selectedCardIds ?? [];
+  const amount = step.value ?? selectedCardIds.length;
+
+  const player = currentState.players[context.actorId];
+
+  const selectedCardsInHand = selectedCardIds
+    .filter((cardId) => player.hand.includes(cardId))
+    .slice(0, amount);
+
+  const updatedPlayer = {
+    ...player,
+    hand: player.hand.filter(
+      (cardId) => !selectedCardsInHand.includes(cardId)
+    ),
+    water: [...player.water, ...selectedCardsInHand],
+  };
+
+  currentState = {
+    ...currentState,
+    players: {
+      ...currentState.players,
+      [context.actorId]: updatedPlayer,
+    },
+  };
+
+  for (const cardId of selectedCardsInHand) {
+    events.push({
+      type: "CARD_JETTISONED",
+      playerId: context.actorId,
+      cardId,
+      from: "HAND",
+      to: "WATER",
+      pointsGained: 0,
+    });
+  }
+
+  break;
+}
     }
   }
+  
 
   return {
     state: currentState,

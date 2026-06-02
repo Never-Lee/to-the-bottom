@@ -1,3 +1,4 @@
+import type { CardId, EffectInput } from "../cards/CardSchema";
 import type { PlayerId } from "../core/GameState";
 
 export type GameAction =
@@ -18,4 +19,10 @@ export type GameAction =
     | {
     type: "DRAW_PHASE";
     playerId: PlayerId;
-  };
+  }
+  | {
+    type: "ACTIVATE_CARD";
+    playerId: PlayerId;
+    cardId: CardId;
+    input?: EffectInput;
+  }

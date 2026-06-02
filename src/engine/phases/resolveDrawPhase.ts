@@ -40,6 +40,8 @@ if (skipDrawPhase) {
   drawCount = 0;
 }
 
+drawCount = Math.max(0, drawCount);
+
   const drawnCards = player.deck.slice(0, drawCount);
   const remainingDeck = player.deck.slice(drawCount);
 

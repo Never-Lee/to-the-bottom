@@ -13,7 +13,7 @@ export const scenarios: Scenario[] = [
     effect: {
       cardId: "anchor",
       effectIndex: 1,
-      ownerId: "P1" as const,
+      actorId: "P1" as const,
     },
     expectedEvents: ["CARD_JETTISONED"],
     expectedState: {
@@ -179,4 +179,249 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Stoker forces player to draw one fewer card",
+  state: createTestState({
+    P1: {
+      board: ["stoker"],
+      deck: [
+        "passenger",
+        "anchor",
+        "fisherman",
+      ],
+    },
+  }),
+  action: {
+    type: "DRAW_PHASE" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: [
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+  ],
+  expectedState: {
+    P1: {
+      board: ["stoker"],
+      hand: [
+        "passenger",
+        "anchor",
+      ],
+      deck: [
+        "fisherman",
+      ],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Fisherman modifies third CRUISE draw from 5 to 6",
+  state: createTestState({
+    drawTurnIndex: 2,
+    P1: {
+      board: ["fisherman"],
+      deck: [
+        "passenger",
+        "anchor",
+        "fisherman",
+        "stoker",
+        "passenger",
+        "anchor",
+      ],
+    },
+  }),
+  action: {
+    type: "DRAW_PHASE" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: [
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+  ],
+  expectedState: {
+    P1: {
+      board: ["fisherman"],
+      hand: [
+        "passenger",
+        "anchor",
+        "fisherman",
+        "stoker",
+        "passenger",
+        "anchor",
+      ],
+      deck: [],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Captain shuffles selected hand cards into deck and draws same amount",
+  state: createTestState({
+    P1: {
+      board: ["captain"],
+      hand: ["passenger", "anchor"],
+      deck: ["fisherman", "stoker"],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "captain",
+    input: {
+      selectedCardIds: ["passenger", "anchor"],
+    },
+  },
+  expectedEvents: [
+    "CARDS_SHUFFLED_INTO_DECK",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+  ],
+  expectedState: {
+    P1: {
+      board: ["captain"],
+      hand: ["fisherman", "stoker"],
+      deck: ["passenger", "anchor"],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Torpedo jettisons opponent deck cards and one card from hand",
+  state: createTestState({
+    P1: {
+      board: ["torpedo"],
+      hand: ["passenger"],
+    },
+    P2: {
+      deck: [
+        "anchor",
+        "fisherman",
+        "stoker",
+        "captain",
+      ],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "torpedo",
+    input: {
+      targetPlayerId: "P2",
+      selectedCardIds: ["passenger"],
+    },
+  },
+  expectedEvents: [
+    "CARD_JETTISONED",
+    "CARD_JETTISONED",
+    "CARD_JETTISONED",
+    "CARD_JETTISONED",
+  ],
+  expectedState: {
+    P1: {
+      board: ["torpedo"],
+      hand: [],
+      water: ["passenger"],
+    },
+    P2: {
+      deck: ["captain"],
+      water: [
+        "anchor",
+        "fisherman",
+        "stoker",
+      ],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Torpedo cannot activate without cards in hand",
+  state: createTestState({
+    P1: {
+      board: ["torpedo"],
+      hand: [],
+    },
+    P2: {
+      deck: [
+        "anchor",
+        "fisherman",
+        "stoker",
+      ],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "torpedo",
+    input: {
+      targetPlayerId: "P2",
+      selectedCardIds: [],
+    },
+  },
+  expectedEvents: [
+    "ACTION_REJECTED",
+  ],
+  expectedState: {
+    P1: {
+      board: ["torpedo"],
+      hand: [],
+      water: [],
+    },
+    P2: {
+      deck: [
+        "anchor",
+        "fisherman",
+        "stoker",
+      ],
+      water: [],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Torpedo partially resolves when opponent deck has fewer than 3 cards",
+  state: createTestState({
+    P1: {
+      board: ["torpedo"],
+      hand: ["passenger"],
+    },
+    P2: {
+      deck: [
+        "anchor",
+        "fisherman",
+      ],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "torpedo",
+    input: {
+      targetPlayerId: "P2",
+      selectedCardIds: ["passenger"],
+    },
+  },
+  expectedEvents: [
+    "CARD_JETTISONED",
+    "CARD_JETTISONED",
+    "CARD_JETTISONED",
+  ],
+  expectedState: {
+    P1: {
+      hand: [],
+      water: ["passenger"],
+    },
+    P2: {
+      deck: [],
+      water: [
+        "anchor",
+        "fisherman",
+      ],
+    },
+  },
+},
 ];
+

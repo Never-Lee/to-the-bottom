@@ -15,7 +15,7 @@ const result = resolveEffect(
   initialState,
   anchorEffect,
   {
-    ownerId: "P1",
+    actorId: "P1",
     sourceCardId: "anchor",
   }
 );

@@ -5,6 +5,10 @@ type PartialPlayerState = Partial<Omit<PlayerState, "id">>;
 type TestStateConfig = {
   P1?: PartialPlayerState;
   P2?: PartialPlayerState;
+    activePlayerId?: "P1" | "P2";
+  turnNumber?: number;
+  chapter?: "CRUISE" | "SINKING";
+  drawTurnIndex?: number;
 };
 
 const defaultPlayerState = (id: "P1" | "P2"): PlayerState => ({
@@ -17,12 +21,12 @@ const defaultPlayerState = (id: "P1" | "P2"): PlayerState => ({
 });
 
 export function createTestState(config: TestStateConfig = {}): GameState {
-  return {
-    activePlayerId: "P1",
-    turnNumber: 1,
-      chapter: "CRUISE",
-  drawTurnIndex: 0,
-    players: {
+return {
+  activePlayerId: config.activePlayerId ?? "P1",
+  turnNumber: config.turnNumber ?? 1,
+  chapter: config.chapter ?? "CRUISE",
+  drawTurnIndex: config.drawTurnIndex ?? 0,
+  players: {
       P1: {
         ...defaultPlayerState("P1"),
         ...config.P1,
