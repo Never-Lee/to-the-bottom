@@ -47,3 +47,18 @@ export type GameEvent =
     playerId: PlayerId;
     cardIds: CardId[];
   }
+| {
+    type: "TURN_ENDED";
+    playerId: PlayerId;
+  }
+| {
+    type: "TURN_STARTED";
+    playerId: PlayerId;
+  }
+  | {
+    type: "SINKING_STARTED";
+    actorId: PlayerId;
+  }
+| {
+    type: "SINKING_SETUP_COMPLETED";
+  }

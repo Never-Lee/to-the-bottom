@@ -11,16 +11,6 @@ export type ExpectedPlayerState = {
   exhaustedCards?: CardId[];
 };
 
-export type BaseScenario = {
-  name: string;
-  state: GameState;
-  expectedEvents: string[];
-  expectedState: {
-    P1?: ExpectedPlayerState;
-    P2?: ExpectedPlayerState;
-  };
-};
-
 export type EffectScenario = BaseScenario & {
   kind: "effect";
   effect: {
@@ -36,3 +26,19 @@ export type ActionScenario = BaseScenario & {
 };
 
 export type Scenario = EffectScenario | ActionScenario;
+
+export type ExpectedGameState = {
+  activePlayerId?: PlayerId;
+  turnNumber?: number;
+  P1?: ExpectedPlayerState;
+  P2?: ExpectedPlayerState;
+  chapter?: "CRUISE" | "SINKING";
+drawTurnIndex?: number;
+};
+
+export type BaseScenario = {
+  name: string;
+  state: GameState;
+  expectedEvents: string[];
+  expectedState: ExpectedGameState;
+};

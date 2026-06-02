@@ -156,5 +156,26 @@ torpedo: {
     },
   ],
 },
+iceberg: {
+  id: "iceberg",
+  name: "Iceberg",
+  color: "BEIGE",
+  cost: 20,
+  points: 10,
+  effects: [
+    {
+      id: "iceberg_start_sinking",
+      trigger: "ON_BUY",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "AUTOMATIC",
+      optional: false,
+      steps: [
+        {
+          effect: "START_SINKING_PHASE",
+        },
+      ],
+    },
+  ],
+},
 };
 

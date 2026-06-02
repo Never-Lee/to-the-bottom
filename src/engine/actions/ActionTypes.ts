@@ -30,3 +30,7 @@ export type GameAction =
     type: "READY_PHASE";
     playerId: PlayerId;
   }
+  | {
+    type: "END_TURN";
+    playerId: PlayerId;
+  }

@@ -20,6 +20,7 @@ export type EffectKeyword =
   | "DRAW_SAME_AMOUNT"
   | "JETTISON_FROM_OPPONENT_DECK"
   | "JETTISON_SELECTED_HAND_CARDS"
+  | "START_SINKING_PHASE"
 
 export type CardSchema = {
   id: CardId;

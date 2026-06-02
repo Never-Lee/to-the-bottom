@@ -27,7 +27,63 @@ export function resolveEffect(
         });
         break;
       }
+      
+case "START_SINKING_PHASE": {
+  const rebuiltPlayers = { ...currentState.players };
 
+  const setupDrawEvents: GameEvent[] = [];
+
+  for (const playerId of ["P1", "P2"] as const) {
+    const player = currentState.players[playerId];
+
+    const rebuiltDeck = [
+      ...player.hand,
+      ...player.deck,
+      ...player.water,
+    ];
+
+    const setupHand = rebuiltDeck.slice(0, 5);
+    const remainingDeck = rebuiltDeck.slice(5);
+
+    rebuiltPlayers[playerId] = {
+      ...player,
+      hand: setupHand,
+      deck: remainingDeck,
+      water: [],
+    };
+
+    for (const cardId of setupHand) {
+      setupDrawEvents.push({
+        type: "CARD_DRAWN",
+        playerId,
+        cardId,
+        from: "DECK",
+        to: "HAND",
+      });
+    }
+  }
+
+  currentState = {
+    ...currentState,
+    chapter: "SINKING",
+    drawTurnIndex: 0,
+    activePlayerId: context.actorId,
+    players: rebuiltPlayers,
+  };
+
+  events.push({
+    type: "SINKING_STARTED",
+    actorId: context.actorId,
+  });
+
+  events.push(...setupDrawEvents);
+
+  events.push({
+    type: "SINKING_SETUP_COMPLETED",
+  });
+
+  break;
+}
       case "JETTISON_SELF": {
         const player = currentState.players[context.actorId];
 
@@ -39,6 +95,7 @@ export function resolveEffect(
           });
           break;
         }
+        
 
         const updatedPlayer = {
           ...player,
@@ -165,6 +222,7 @@ export function resolveEffect(
     });
     break;
   }
+  
 
   const targetPlayer = currentState.players[targetPlayerId];
   const amount = step.value ?? 0;

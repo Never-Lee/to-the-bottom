@@ -473,5 +473,83 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "End turn switches active player",
+  state: createTestState({
+    activePlayerId: "P1",
+    turnNumber: 1,
+  }),
+  action: {
+    type: "END_TURN" as const,
+    playerId: "P1" as const,
+  },
+  expectedEvents: ["TURN_ENDED", "TURN_STARTED"],
+  expectedState: {
+    activePlayerId: "P2",
+    turnNumber: 2,
+  },
+},
+{
+  kind: "effect",
+  name: "Iceberg starts Sinking phase and rebuilds decks",
+  state: createTestState({
+    activePlayerId: "P1",
+    chapter: "CRUISE",
+    drawTurnIndex: 7,
+    P1: {
+      hand: ["passenger"],
+      deck: ["anchor"],
+      water: ["fisherman"],
+      board: ["iceberg"],
+    },
+    P2: {
+      hand: ["stoker"],
+      deck: ["captain"],
+      water: ["torpedo"],
+      board: ["fisherman"],
+    },
+  }),
+  effect: {
+    cardId: "iceberg",
+    effectIndex: 0,
+    actorId: "P1" as const,
+  },
+  expectedEvents: [
+    "SINKING_STARTED",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "SINKING_SETUP_COMPLETED",
+  ],
+  expectedState: {
+    activePlayerId: "P1",
+    chapter: "SINKING",
+    drawTurnIndex: 0,
+    P1: {
+      hand: [
+        "passenger",
+        "anchor",
+        "fisherman",
+      ],
+      deck: [],
+      water: [],
+      board: ["iceberg"],
+    },
+    P2: {
+      hand: [
+        "stoker",
+        "captain",
+        "torpedo",
+      ],
+      deck: [],
+      water: [],
+      board: ["fisherman"],
+    },
+  },
+},
 ];
 

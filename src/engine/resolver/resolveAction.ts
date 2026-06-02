@@ -281,6 +281,40 @@ case "READY_PHASE": {
     ],
   };
 }
+case "END_TURN": {
+  if (action.playerId !== state.activePlayerId) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Only active player can end turn",
+        },
+      ],
+    };
+  }
+
+  const nextPlayerId = state.activePlayerId === "P1" ? "P2" : "P1";
+
+  return {
+    state: {
+      ...state,
+      activePlayerId: nextPlayerId,
+      turnNumber: state.turnNumber + 1,
+    },
+    events: [
+      {
+        type: "TURN_ENDED",
+        playerId: action.playerId,
+      },
+      {
+        type: "TURN_STARTED",
+        playerId: nextPlayerId,
+      },
+    ],
+  };
+}
     default:
       return { state, events: [] };
   }
