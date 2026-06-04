@@ -551,5 +551,94 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Player buys Captain from shop into water",
+  state: createTestState({
+    shop: ["captain"],
+    P1: {
+      points: 12,
+    },
+  }),
+  action: {
+    type: "BUY_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "captain",
+  },
+  expectedEvents: ["CARD_BOUGHT"],
+  expectedState: {
+    P1: {
+      points: 3,
+      water: ["captain"],
+    },
+  },
+},
+{
+  kind: "action",
+  name: "Buying Iceberg starts Sinking phase",
+  state: createTestState({
+    activePlayerId: "P1",
+    chapter: "CRUISE",
+    drawTurnIndex: 4,
+    shop: ["iceberg"],
+    P1: {
+      points: 20,
+      hand: ["passenger"],
+      deck: ["anchor"],
+      water: ["fisherman"],
+      board: [],
+    },
+    P2: {
+      hand: ["stoker"],
+      deck: ["captain"],
+      water: ["torpedo"],
+      board: ["fisherman"],
+    },
+  }),
+  action: {
+    type: "BUY_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "iceberg",
+  },
+  expectedEvents: [
+    "CARD_BOUGHT",
+    "SINKING_STARTED",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "CARD_DRAWN",
+    "SINKING_SETUP_COMPLETED",
+  ],
+  expectedState: {
+    activePlayerId: "P1",
+    chapter: "SINKING",
+    drawTurnIndex: 0,
+    P1: {
+      points: 0,
+      hand: [
+        "passenger",
+        "anchor",
+        "fisherman",
+        "iceberg",
+      ],
+      deck: [],
+      water: [],
+      board: [],
+    },
+    P2: {
+      hand: [
+        "stoker",
+        "captain",
+        "torpedo",
+      ],
+      deck: [],
+      water: [],
+      board: ["fisherman"],
+    },
+  },
+},
 ];
 

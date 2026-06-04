@@ -18,7 +18,8 @@ export type GameState = {
   activePlayerId: PlayerId;
   turnNumber: number;
   chapter: GameChapter;
-drawTurnIndex: number;
+  drawTurnIndex: number;
+  shop: CardId[];
 };
 
 export type GameChapter = "CRUISE" | "SINKING";
@@ -29,6 +30,7 @@ export function createInitialGameState(): GameState {
     turnNumber: 1,
       chapter: "CRUISE",
   drawTurnIndex: 0,
+    shop: [],
     players: {
       P1: {
         id: "P1",

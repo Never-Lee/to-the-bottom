@@ -34,3 +34,8 @@ export type GameAction =
     type: "END_TURN";
     playerId: PlayerId;
   }
+  | {
+    type: "BUY_CARD";
+    playerId: PlayerId;
+    cardId: CardId;
+  }

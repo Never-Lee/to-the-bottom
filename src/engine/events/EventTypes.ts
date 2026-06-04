@@ -62,3 +62,11 @@ export type GameEvent =
 | {
     type: "SINKING_SETUP_COMPLETED";
   }
+  | {
+    type: "CARD_BOUGHT";
+    playerId: PlayerId;
+    cardId: CardId;
+    from: "SHOP";
+    to: "WATER";
+    costPaid: number;
+  }

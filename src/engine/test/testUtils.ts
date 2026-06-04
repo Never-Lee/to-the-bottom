@@ -1,8 +1,10 @@
+import type { CardId } from "../cards/CardSchema";
 import type { GameState, PlayerState } from "../core/GameState";
 
 type PartialPlayerState = Partial<Omit<PlayerState, "id">>;
 
 type TestStateConfig = {
+  shop?: CardId[];
   P1?: PartialPlayerState;
   P2?: PartialPlayerState;
     activePlayerId?: "P1" | "P2";
@@ -27,6 +29,7 @@ return {
   turnNumber: config.turnNumber ?? 1,
   chapter: config.chapter ?? "CRUISE",
   drawTurnIndex: config.drawTurnIndex ?? 0,
+  shop: config.shop ?? [],
   players: {
       P1: {
         ...defaultPlayerState("P1"),

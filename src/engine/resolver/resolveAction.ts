@@ -315,6 +315,88 @@ case "END_TURN": {
     ],
   };
 }
+case "BUY_CARD": {
+  const player = state.players[action.playerId];
+
+  if (!state.shop.includes(action.cardId)) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Card is not in shop",
+        },
+      ],
+    };
+  }
+
+  const card = getCard(action.cardId);
+
+  if (player.points < card.cost) {
+    return {
+      state,
+      events: [
+        {
+          type: "ACTION_REJECTED",
+          playerId: action.playerId,
+          reason: "Not enough points",
+        },
+      ],
+    };
+  }
+
+  const updatedPlayer = {
+    ...player,
+    points: player.points - card.cost,
+    water: [...player.water, action.cardId],
+  };
+
+  const boughtState: GameState = {
+    ...state,
+    shop: state.shop.filter((cardId) => cardId !== action.cardId),
+    players: {
+      ...state.players,
+      [action.playerId]: updatedPlayer,
+    },
+  };
+
+  const buyEvents: GameEvent[] = [
+    {
+      type: "CARD_BOUGHT",
+      playerId: action.playerId,
+      cardId: action.cardId,
+      from: "SHOP",
+      to: "WATER",
+      costPaid: card.cost,
+    },
+  ];
+
+  const onBuyEffect = card.effects.find(
+    (effect) => effect.trigger === "ON_BUY"
+  );
+
+  if (!onBuyEffect) {
+    return {
+      state: boughtState,
+      events: buyEvents,
+    };
+  }
+
+  const effectResult = resolveEffect(
+    boughtState,
+    onBuyEffect,
+    {
+      actorId: action.playerId,
+      sourceCardId: action.cardId,
+    }
+  );
+
+  return {
+    state: effectResult.state,
+    events: [...buyEvents, ...effectResult.events],
+  };
+}
     default:
       return { state, events: [] };
   }
