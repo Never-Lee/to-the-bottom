@@ -22,6 +22,7 @@ export type EffectKeyword =
   | "JETTISON_SELECTED_HAND_CARDS"
   | "START_SINKING_PHASE"
   | "MOVE_SELF_TO_DECK_BOTTOM"
+  | "EACH_PLAYER_MOVES_SELECTED_BOARD_CARD_TO_DECK_BOTTOM"
 
 export type CardSchema = {
   id: CardId;
@@ -57,6 +58,7 @@ export type EffectContext = {
 export type EffectInput = {
   selectedCardIds?: CardId[];
   targetPlayerId?: PlayerId;
+  selectedCardsByPlayerId?: Partial<Record<PlayerId, CardId>>;
 
 };
 export type ActivationRequirement = {

@@ -20,6 +20,55 @@ export function resolveEffect(
 
   for (const step of effect.steps) {
     switch (step.effect) {
+      case "EACH_PLAYER_MOVES_SELECTED_BOARD_CARD_TO_DECK_BOTTOM": {
+  const selectedCardsByPlayerId = input?.selectedCardsByPlayerId ?? {};
+
+  for (const playerId of ["P1", "P2"] as const) {
+    const selectedCardId = selectedCardsByPlayerId[playerId];
+
+    if (!selectedCardId) {
+      continue;
+    }
+
+    const player = currentState.players[playerId];
+
+    if (!player.board.includes(selectedCardId)) {
+      events.push({
+        type: "ACTION_REJECTED",
+        playerId,
+        reason: "Selected card is not on board",
+      });
+      continue;
+    }
+
+    const updatedPlayer = {
+      ...player,
+      board: player.board.filter((cardId) => cardId !== selectedCardId),
+      deck: [...player.deck, selectedCardId],
+      exhaustedCards: player.exhaustedCards.filter(
+        (cardId) => cardId !== selectedCardId
+      ),
+    };
+
+    currentState = {
+      ...currentState,
+      players: {
+        ...currentState.players,
+        [playerId]: updatedPlayer,
+      },
+    };
+
+    events.push({
+      type: "CARD_MOVED",
+      playerId,
+      cardId: selectedCardId,
+      from: "BOARD",
+      to: "DECK_BOTTOM",
+    });
+  }
+
+  break;
+}
       case "SKIP_DRAW_PHASE": {
         events.push({
           type: "DRAW_PHASE_SKIPPED",

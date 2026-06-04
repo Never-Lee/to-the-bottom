@@ -663,5 +663,45 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Janitor makes each player move selected board card to deck bottom",
+  state: createTestState({
+    P1: {
+      board: ["janitor", "passenger"],
+      deck: [],
+    },
+    P2: {
+      board: ["fisherman"],
+      deck: [],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "janitor",
+    input: {
+      selectedCardsByPlayerId: {
+        P1: "passenger",
+        P2: "fisherman",
+      },
+    },
+  },
+  expectedEvents: [
+    "CARD_MOVED",
+    "CARD_MOVED",
+  ],
+  expectedState: {
+    P1: {
+      board: ["janitor"],
+      deck: ["passenger"],
+      exhaustedCards: ["janitor"],
+    },
+    P2: {
+      board: [],
+      deck: ["fisherman"],
+    },
+  },
+},
 ];
 

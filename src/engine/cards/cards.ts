@@ -199,5 +199,27 @@ jack: {
     },
   ],
 },
+janitor: {
+  id: "janitor",
+  name: "Janitor",
+  color: "PURPLE",
+  cost: 4,
+  points: 4,
+  effects: [
+    {
+      id: "janitor_each_player_bottom_deck",
+      trigger: "ACTION_PHASE",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "EXHAUST",
+      optional: true,
+      steps: [
+        {
+          effect: "EACH_PLAYER_MOVES_SELECTED_BOARD_CARD_TO_DECK_BOTTOM",
+          target: "ALL_PLAYERS",
+        },
+      ],
+    },
+  ],
+},
 };
 
