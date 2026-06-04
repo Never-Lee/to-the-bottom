@@ -21,6 +21,7 @@ export type EffectKeyword =
   | "JETTISON_FROM_OPPONENT_DECK"
   | "JETTISON_SELECTED_HAND_CARDS"
   | "START_SINKING_PHASE"
+  | "MOVE_SELF_TO_DECK_BOTTOM"
 
 export type CardSchema = {
   id: CardId;

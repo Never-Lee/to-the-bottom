@@ -70,3 +70,10 @@ export type GameEvent =
     to: "WATER";
     costPaid: number;
   }
+  | {
+    type: "CARD_MOVED";
+    playerId: PlayerId;
+    cardId: CardId;
+    from: "BOARD";
+    to: "DECK_BOTTOM";
+  }

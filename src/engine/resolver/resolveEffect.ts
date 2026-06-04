@@ -27,6 +27,48 @@ export function resolveEffect(
         });
         break;
       }
+
+      case "MOVE_SELF_TO_DECK_BOTTOM": {
+  const player = currentState.players[context.actorId];
+
+  if (!player.board.includes(context.sourceCardId)) {
+    events.push({
+      type: "ACTION_REJECTED",
+      playerId: context.actorId,
+      reason: "Source card is not on board",
+    });
+    break;
+  }
+
+  const updatedPlayer = {
+    ...player,
+    board: player.board.filter(
+      (cardId) => cardId !== context.sourceCardId
+    ),
+    deck: [...player.deck, context.sourceCardId],
+    exhaustedCards: player.exhaustedCards.filter(
+      (cardId) => cardId !== context.sourceCardId
+    ),
+  };
+
+  currentState = {
+    ...currentState,
+    players: {
+      ...currentState.players,
+      [context.actorId]: updatedPlayer,
+    },
+  };
+
+  events.push({
+    type: "CARD_MOVED",
+    playerId: context.actorId,
+    cardId: context.sourceCardId,
+    from: "BOARD",
+    to: "DECK_BOTTOM",
+  });
+
+  break;
+}
       
 case "START_SINKING_PHASE": {
   const rebuiltPlayers = { ...currentState.players };

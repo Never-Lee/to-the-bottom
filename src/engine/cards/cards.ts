@@ -177,5 +177,27 @@ iceberg: {
     },
   ],
 },
+jack: {
+  id: "jack",
+  name: "Jack",
+  color: "BEIGE",
+  cost: 0,
+  points: 0,
+  effects: [
+    {
+      id: "jack_move_self_to_deck_bottom",
+      trigger: "ACTION_PHASE",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "EXHAUST",
+      optional: true,
+      steps: [
+        {
+          effect: "MOVE_SELF_TO_DECK_BOTTOM",
+          target: "SELF",
+        },
+      ],
+    },
+  ],
+},
 };
 
