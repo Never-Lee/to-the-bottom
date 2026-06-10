@@ -136,6 +136,60 @@ case "GAIN_POINTS": {
   break;
 }
 
+case "EACH_OPPONENT_RETURNS_SELECTED_BOARD_CARD_TO_HAND": {
+  const selectedCardsByPlayerId = input?.selectedCardsByPlayerId ?? {};
+
+  for (const playerId of ["P1", "P2"] as const) {
+    if (playerId === context.actorId) {
+      continue;
+    }
+
+    const selectedCardId = selectedCardsByPlayerId[playerId];
+
+    if (!selectedCardId) {
+      continue;
+    }
+
+    const player = currentState.players[playerId];
+
+    if (!player.board.includes(selectedCardId)) {
+      events.push({
+        type: "ACTION_REJECTED",
+        playerId,
+        reason: "Selected card is not on board",
+      });
+      continue;
+    }
+
+    const updatedPlayer = {
+      ...player,
+      board: player.board.filter((cardId) => cardId !== selectedCardId),
+      hand: [...player.hand, selectedCardId],
+      exhaustedCards: player.exhaustedCards.filter(
+        (cardId) => cardId !== selectedCardId
+      ),
+    };
+
+    currentState = {
+      ...currentState,
+      players: {
+        ...currentState.players,
+        [playerId]: updatedPlayer,
+      },
+    };
+
+    events.push({
+      type: "CARD_MOVED",
+      playerId,
+      cardId: selectedCardId,
+      from: "BOARD",
+      to: "HAND",
+    });
+  }
+
+  break;
+}
+
       case "MOVE_SELF_TO_DECK_BOTTOM": {
   const player = currentState.players[context.actorId];
 

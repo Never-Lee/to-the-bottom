@@ -750,5 +750,39 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Beggar returns selected opponent board cards to their hands",
+  state: createTestState({
+    P1: {
+      board: ["beggar"],
+    },
+    P2: {
+      board: ["fisherman", "stoker"],
+      hand: [],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "beggar",
+    input: {
+      selectedCardsByPlayerId: {
+        P2: "stoker",
+      },
+    },
+  },
+  expectedEvents: ["CARD_MOVED"],
+  expectedState: {
+    P1: {
+      board: ["beggar"],
+      exhaustedCards: ["beggar"],
+    },
+    P2: {
+      board: ["fisherman"],
+      hand: ["stoker"],
+    },
+  },
+},
 ];
 

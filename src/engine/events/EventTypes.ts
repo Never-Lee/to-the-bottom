@@ -75,7 +75,7 @@ export type GameEvent =
     playerId: PlayerId;
     cardId: CardId;
     from: "BOARD";
-    to: "DECK_BOTTOM";
+    to: "DECK_BOTTOM" | "HAND";
   }
   | {
     type: "POINTS_GAINED";

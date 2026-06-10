@@ -267,5 +267,27 @@ singer: {
     },
   ],
 },
+beggar: {
+  id: "beggar",
+  name: "Beggar",
+  color: "RED",
+  cost: 7,
+  points: 7,
+  effects: [
+    {
+      id: "beggar_return_opponent_board_cards",
+      trigger: "ACTION_PHASE",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "EXHAUST",
+      optional: true,
+      steps: [
+        {
+          effect: "EACH_OPPONENT_RETURNS_SELECTED_BOARD_CARD_TO_HAND",
+          target: "EACH_OPPONENT",
+        },
+      ],
+    },
+  ],
+},
 };
 
