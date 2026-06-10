@@ -727,5 +727,28 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Singer gains 3 points",
+  state: createTestState({
+    P1: {
+      board: ["singer"],
+      points: 2,
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "singer",
+  },
+  expectedEvents: ["POINTS_GAINED"],
+  expectedState: {
+    P1: {
+      points: 5,
+      board: ["singer"],
+      exhaustedCards: ["singer"],
+    },
+  },
+},
 ];
 

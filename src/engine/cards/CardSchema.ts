@@ -24,6 +24,7 @@ export type EffectKeyword =
   | "MOVE_SELF_TO_DECK_BOTTOM"
   | "EACH_PLAYER_MOVES_SELECTED_BOARD_CARD_TO_DECK_BOTTOM"
   | "DRAW_CARDS"
+  | "GAIN_POINTS"
 
 export type CardSchema = {
   id: CardId;

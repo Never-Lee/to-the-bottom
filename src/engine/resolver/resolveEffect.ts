@@ -69,6 +69,31 @@ export function resolveEffect(
 
   break;
 }
+case "GAIN_POINTS": {
+  const amount = step.value ?? 0;
+  const player = currentState.players[context.actorId];
+
+  const updatedPlayer = {
+    ...player,
+    points: player.points + amount,
+  };
+
+  currentState = {
+    ...currentState,
+    players: {
+      ...currentState.players,
+      [context.actorId]: updatedPlayer,
+    },
+  };
+
+  events.push({
+    type: "POINTS_GAINED",
+    playerId: context.actorId,
+    amount,
+  });
+
+  break;
+}
       case "SKIP_DRAW_PHASE": {
         events.push({
           type: "DRAW_PHASE_SKIPPED",

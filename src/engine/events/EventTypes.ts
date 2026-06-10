@@ -77,3 +77,8 @@ export type GameEvent =
     from: "BOARD";
     to: "DECK_BOTTOM";
   }
+  | {
+    type: "POINTS_GAINED";
+    playerId: PlayerId;
+    amount: number;
+  }

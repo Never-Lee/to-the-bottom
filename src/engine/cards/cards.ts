@@ -244,5 +244,28 @@ polkaDancer: {
     },
   ],
 },
+singer: {
+  id: "singer",
+  name: "Singer",
+  color: "PURPLE",
+  cost: 3,
+  points: 3,
+  effects: [
+    {
+      id: "singer_gain_points",
+      trigger: "ACTION_PHASE",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "EXHAUST",
+      optional: true,
+      steps: [
+        {
+          effect: "GAIN_POINTS",
+          target: "SELF",
+          value: 3,
+        },
+      ],
+    },
+  ],
+},
 };
 
