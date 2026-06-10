@@ -703,5 +703,29 @@ export const scenarios: Scenario[] = [
     },
   },
 },
+{
+  kind: "action",
+  name: "Polka Dancer draws one card",
+  state: createTestState({
+    P1: {
+      board: ["polkaDancer"],
+      deck: ["passenger", "anchor"],
+    },
+  }),
+  action: {
+    type: "ACTIVATE_CARD" as const,
+    playerId: "P1" as const,
+    cardId: "polkaDancer",
+  },
+  expectedEvents: ["CARD_DRAWN"],
+  expectedState: {
+    P1: {
+      board: ["polkaDancer"],
+      hand: ["passenger"],
+      deck: ["anchor"],
+      exhaustedCards: ["polkaDancer"],
+    },
+  },
+},
 ];
 

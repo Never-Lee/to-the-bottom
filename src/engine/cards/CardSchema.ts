@@ -23,6 +23,7 @@ export type EffectKeyword =
   | "START_SINKING_PHASE"
   | "MOVE_SELF_TO_DECK_BOTTOM"
   | "EACH_PLAYER_MOVES_SELECTED_BOARD_CARD_TO_DECK_BOTTOM"
+  | "DRAW_CARDS"
 
 export type CardSchema = {
   id: CardId;

@@ -77,6 +77,40 @@ export function resolveEffect(
         break;
       }
 
+      case "DRAW_CARDS": {
+  const amount = step.value ?? 0;
+  const player = currentState.players[context.actorId];
+
+  const drawnCards = player.deck.slice(0, amount);
+  const remainingDeck = player.deck.slice(amount);
+
+  const updatedPlayer = {
+    ...player,
+    deck: remainingDeck,
+    hand: [...player.hand, ...drawnCards],
+  };
+
+  currentState = {
+    ...currentState,
+    players: {
+      ...currentState.players,
+      [context.actorId]: updatedPlayer,
+    },
+  };
+
+  for (const cardId of drawnCards) {
+    events.push({
+      type: "CARD_DRAWN",
+      playerId: context.actorId,
+      cardId,
+      from: "DECK",
+      to: "HAND",
+    });
+  }
+
+  break;
+}
+
       case "MOVE_SELF_TO_DECK_BOTTOM": {
   const player = currentState.players[context.actorId];
 

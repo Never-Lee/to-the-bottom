@@ -221,5 +221,28 @@ janitor: {
     },
   ],
 },
+polkaDancer: {
+  id: "polkaDancer",
+  name: "Polka Dancer",
+  color: "PURPLE",
+  cost: 3,
+  points: 3,
+  effects: [
+    {
+      id: "polka_dancer_draw",
+      trigger: "ACTION_PHASE",
+      timing: "OWN_TURN_ACTION_WINDOW",
+      activation: "EXHAUST",
+      optional: true,
+      steps: [
+        {
+          effect: "DRAW_CARDS",
+          target: "SELF",
+          value: 1,
+        },
+      ],
+    },
+  ],
+},
 };
 
